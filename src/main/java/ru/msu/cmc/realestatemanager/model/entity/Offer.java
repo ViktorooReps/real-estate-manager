@@ -1,20 +1,22 @@
 package ru.msu.cmc.realestatemanager.model.entity;
 
+import com.bazarnazar.pgjson.JsonMapType;
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.util.Map;
 
 @Entity
 @Table(name = "offers")
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@TypeDef(name = "json", typeClass = JsonMapType.class)
 public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,12 +40,12 @@ public class Offer {
     private String estateFacade;
 
     @Column(name = "space", nullable = false)
-    @Type(type = "com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType")
-    private JsonNode space;
+    @Type(type = "json")
+    private Map<String, Integer> space;
 
     @Column(name = "commodities", nullable = false)
-    @Type(type = "com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType")
-    private JsonNode commodities;
+    @Type(type = "json")
+    private Map<String, Boolean> commodities;
 
     @Column(name = "floor", nullable = false)
     private Integer floor;
@@ -53,8 +55,8 @@ public class Offer {
     private String buildingState;
 
     @Column(name = "transport", nullable = false)
-    @Type(type = "com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType")
-    private JsonNode transport;
+    @Type(type = "json")
+    private Map<String, Integer> transport;
 
     @Lob
     @Column(name = "location", nullable = false)
