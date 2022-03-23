@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS Orders CASCADE;
-DROP TABLE IF EXISTS Offer CASCADE;
+DROP TABLE IF EXISTS Offers CASCADE;
 DROP TABLE IF EXISTS Clients CASCADE;
 
 CREATE TABLE IF NOT EXISTS Clients(
@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS Orders(
     requested_commodities JSON,
     floor_min INTEGER CHECK ( floor_min > 0 ),
     floor_max INTEGER CHECK ( floor_max > floor_min ),
+    building_state TEXT,
     requested_transport_max JSON,
     requested_locations JSON,
     price_max INTEGER CHECK ( price_max > 0 )
@@ -48,18 +49,18 @@ INSERT INTO Clients (client_id, client_name, email, phone_number)
            (5,  'Paul Paulig',      'paul@m.com',   '+72375802');
 
 INSERT INTO Orders (order_id, ordered_by, contract_type, requested_estate_types, requested_estate_facades,
-                    requested_space_min, requested_commodities, floor_min, floor_max, requested_transport_max,
+                    requested_space_min, requested_commodities, floor_min, floor_max, building_state, requested_transport_max,
                     requested_locations, price_max)
     VALUES (1, 1, 'long-term rental', NULL, NULL, '{"total": 100, "kitchen": 10}', '{"Internet": true}', NULL,
-            NULL, NULL, '{"Moscow inside MKAD": true, "Moscow outside MKAD": true, "Moscow region": false}', 100000),
+            NULL, NULL, NULL, '{"Moscow inside MKAD": true, "Moscow outside MKAD": true, "Moscow region": false}', 100000),
            (2, 2, 'short-term rental', '{"cottage": true, "apartment": false, "room": false}', NULL, NULL,
-            '{"sauna": true, "pool": true}', NULL, NULL, '{"train": 15}', NULL, 10000),
+            '{"sauna": true, "pool": true}', NULL, NULL, NULL, '{"train": 15}', NULL, 10000),
            (3, 3, 'purchase', '{"apartment": true, "room": true, "cottage": false}',
-            '{"brick": true, "concrete": false, "wood": false}', NULL, NULL, 5, 14, NULL, NULL, 5000000),
+            '{"brick": true, "concrete": false, "wood": false}', NULL, NULL, 5, 14, 'new', NULL, NULL, 5000000),
            (4, 4, 'short-term rental', '{"cottage": false, "apartment": true, "room": false}', NULL, NULL, NULL, NULL,
-            NULL, '{"bus": 5, "metro": 10}',
+            NULL, NULL, '{"bus": 5, "metro": 10}',
             '{"Moscow inside MKAD": true, "Moscow outside MKAD": false, "Moscow region": false}', 2000),
-           (5, 5, 'long-term rental', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10000);
+           (5, 5, 'long-term rental', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10000);
 
 INSERT INTO Offers (offer_id, offered_by, contract_type, estate_type, estate_facade, space, commodities, floor,
                     building_state, transport, location, starting_price, address)
