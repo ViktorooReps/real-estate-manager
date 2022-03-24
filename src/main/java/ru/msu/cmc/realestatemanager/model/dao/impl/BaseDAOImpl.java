@@ -42,19 +42,15 @@ public class BaseDAOImpl<SomeEntity> implements BaseDAO<SomeEntity> {
     }
 
     @Override
-    public SomeEntity getById(Long id) {
+    public SomeEntity getById(Integer id) {
         Session session = HibernateConfiguration.getSessionFactory().openSession();
 
         try {
-            SomeEntity entity = session.load(this.entityClass, id);
-            session.close();
-            return entity;
+            return session.load(this.entityClass, id);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Ошибка 'getClientById'",
                     JOptionPane.WARNING_MESSAGE);
         }
-
-        session.close();
         return null;
     }
 }

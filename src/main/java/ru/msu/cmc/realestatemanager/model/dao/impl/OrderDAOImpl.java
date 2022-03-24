@@ -28,26 +28,26 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
             List<Predicate> predicates = new ArrayList<>();
             if (filter.getContractType() != null) {
                 String pattern = "%" + filter.getContractType() + "%"; // Any contract type containing substring
-                predicates.add(builder.like(root.get("contract_type"), pattern));
+                predicates.add(builder.like(root.get("contractType"), pattern));
             }
             if (filter.getEstateType() != null) {
                 String estateType = filter.getEstateType();
                 Expression<Boolean> isNeeded = builder.function(
                         "json_extract_path_text",
-                        Boolean.class,
-                        root.get("requested_estate_types"),
+                        String.class,
+                        root.get("requestedEstateTypes"),
                         builder.literal(estateType)
-                );
+                ).as(Boolean.class);
                 predicates.add(builder.isTrue(isNeeded));
             }
             if (filter.getEstateFacade() != null) {
                 String estateFacade = filter.getEstateFacade();
                 Expression<Boolean> isNeeded = builder.function(
                         "json_extract_path_text",
-                        Boolean.class,
-                        root.get("requested_estate_facades"),
+                        String.class,
+                        root.get("requestedEstateFacades"),
                         builder.literal(estateFacade)
-                );
+                ).as(Boolean.class);
                 predicates.add(builder.isTrue(isNeeded));
             }
             if (filter.getSpace() != null) {
@@ -56,10 +56,10 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
                     Integer roomSpace = space.get(room);
                     Expression<Integer> requestedMinRoomSpace = builder.function(
                             "json_extract_path_text",
-                            Integer.class,
-                            root.get("requested_space_min"),
+                            String.class,
+                            root.get("requestedSpaceMin"),
                             builder.literal(room)
-                    );
+                    ).as(Integer.class);
                     Predicate notStated = requestedMinRoomSpace.isNull();
                     Predicate moreSpace = builder.le(requestedMinRoomSpace, builder.literal(roomSpace));
                     predicates.add(builder.or(notStated, moreSpace));
@@ -71,10 +71,10 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
                     Boolean isPresent = commodities.get(commodity);
                     Expression<Boolean> requestedCommodities = builder.function(
                             "json_extract_path_text",
-                            Boolean.class,
-                            root.get("requested_commodities"),
+                            String.class,
+                            root.get("requestedCommodities"),
                             builder.literal(commodity)
-                    );
+                    ).as(Boolean.class);
                     Predicate notStated = requestedCommodities.isNull();
                     Predicate matches = builder.equal(requestedCommodities, builder.literal(isPresent));
                     predicates.add(builder.or(notStated, matches));
@@ -82,8 +82,8 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
             }
             if (filter.getFloor() != null) {
                 Integer floor = filter.getFloor();
-                Predicate moreThanMin = builder.ge(root.get("floor_min"), builder.literal(floor));
-                Predicate lessThanMax = builder.le(root.get("floor_max"), builder.literal(floor));
+                Predicate moreThanMin = builder.ge(root.get("floorMin"), builder.literal(floor));
+                Predicate lessThanMax = builder.le(root.get("floorMax"), builder.literal(floor));
                 predicates.add(builder.and(moreThanMin, lessThanMax));
             }
             if (filter.getBuildingState() != null) {
@@ -96,10 +96,10 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
                     Integer transportDistance = transport.get(transportType);
                     Expression<Integer> requestedTransportDistance = builder.function(
                             "json_extract_path_text",
-                            Integer.class,
-                            root.get("requested_transport_max"),
+                            String.class,
+                            root.get("requestedTransportMax"),
                             builder.literal(transportType)
-                    );
+                    ).as(Integer.class);
                     Predicate notStated = requestedTransportDistance.isNull();
                     Predicate closer = builder.le(builder.literal(transportDistance), requestedTransportDistance);
                     predicates.add(builder.or(notStated, closer));
@@ -111,7 +111,7 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
             }
             if (filter.getStartingPrice() != null) {
                 Integer startingPrice = filter.getStartingPrice();
-                predicates.add(builder.le(builder.literal(startingPrice), root.get("starting_price")));
+                predicates.add(builder.le(builder.literal(startingPrice), root.get("startingPrice")));
             }
 
             if (predicates.size() != 0)

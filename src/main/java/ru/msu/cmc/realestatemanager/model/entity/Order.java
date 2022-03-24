@@ -4,6 +4,7 @@ import com.bazarnazar.pgjson.JsonMapType;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import ru.msu.cmc.realestatemanager.model.util.HashMapConverter;
 
 import javax.persistence.*;
 import java.util.Map;
@@ -29,23 +30,24 @@ public class Order {
 
     @Lob
     @Column(name = "contract_type", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
     private String contractType;
 
     @Column(name = "requested_estate_types")
-    @Type(type = "json")
-    private Map<String, Boolean> requestedEstateTypes;
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> requestedEstateTypes;
 
     @Column(name = "requested_estate_facades")
-    @Type(type = "json")
-    private Map<String, Boolean> requestedEstateFacades;
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> requestedEstateFacades;
 
     @Column(name = "requested_space_min")
-    @Type(type = "json")
-    private Map<String, Integer> requestedSpaceMin;
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> requestedSpaceMin;
 
     @Column(name = "requested_commodities")
-    @Type(type = "json")
-    private Map<String, Boolean> requestedCommodities;
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> requestedCommodities;
 
     @Column(name = "floor_min")
     private Integer floorMin;
@@ -55,15 +57,16 @@ public class Order {
 
     @Lob
     @Column(name = "building_state", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
     private String buildingState;
 
     @Column(name = "requested_transport_max")
-    @Type(type = "json")
-    private Map<String, Integer> requestedTransportMax;
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> requestedTransportMax;
 
     @Column(name = "requested_locations")
-    @Type(type = "json")
-    private Map<String, Boolean> requestedLocations;
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> requestedLocations;
 
     @Column(name = "price_max")
     private Integer priceMax;

@@ -1,10 +1,9 @@
 package ru.msu.cmc.realestatemanager.model.entity;
 
-import com.bazarnazar.pgjson.JsonMapType;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.*;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import ru.msu.cmc.realestatemanager.model.util.HashMapConverter;
 
 import javax.persistence.*;
 import java.util.Map;
@@ -16,7 +15,6 @@ import java.util.Map;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@TypeDef(name = "json", typeClass = JsonMapType.class)
 public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,37 +27,42 @@ public class Offer {
 
     @Lob
     @Column(name = "contract_type", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
     private String contractType;
 
     @Lob
     @Column(name = "estate_type", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
     private String estateType;
 
     @Lob
     @Column(name = "estate_facade", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
     private String estateFacade;
 
     @Column(name = "space", nullable = false)
-    @Type(type = "json")
-    private Map<String, Integer> space;
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> space;
 
     @Column(name = "commodities", nullable = false)
-    @Type(type = "json")
-    private Map<String, Boolean> commodities;
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> commodities;
 
     @Column(name = "floor", nullable = false)
     private Integer floor;
 
     @Lob
     @Column(name = "building_state", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
     private String buildingState;
 
     @Column(name = "transport", nullable = false)
-    @Type(type = "json")
-    private Map<String, Integer> transport;
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object>transport;
 
     @Lob
     @Column(name = "location", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
     private String location;
 
     @Column(name = "starting_price", nullable = false)
@@ -67,5 +70,7 @@ public class Offer {
 
     @Lob
     @Column(name = "address", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
     private String address;
+
 }

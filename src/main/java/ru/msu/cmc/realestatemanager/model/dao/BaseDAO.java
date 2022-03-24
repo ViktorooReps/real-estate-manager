@@ -5,5 +5,5 @@ public interface BaseDAO<SomeEntity> {
     void update(SomeEntity entity);
     void delete(SomeEntity entity);
 
-    SomeEntity getById(Long id);
+    SomeEntity getById(Integer id);
 }

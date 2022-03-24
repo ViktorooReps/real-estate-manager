@@ -29,7 +29,7 @@ public class ClientDAOImpl extends BaseDAOImpl<Client> implements ClientDAO {
             List<Predicate> predicates = new ArrayList<>();
             if (filter.getClientName() != null) {
                 String pattern = "%" + filter.getClientName() + "%"; // Any name containing substring
-                predicates.add(builder.like(root.get("client_name"), pattern));
+                predicates.add(builder.like(root.get("clientName"), pattern));
             }
             if (filter.getEmail() != null) {
                 String pattern = "%" + filter.getEmail() + "%"; // Any email containing substring
@@ -37,7 +37,7 @@ public class ClientDAOImpl extends BaseDAOImpl<Client> implements ClientDAO {
             }
             if (filter.getPhoneNumber() != null) {
                 String pattern = "%" + filter.getPhoneNumber() + "%"; // Any number containing substring
-                predicates.add(builder.like(root.get("phone_number"), pattern));
+                predicates.add(builder.like(root.get("phoneNumber"), pattern));
             }
 
             if (predicates.size() != 0)
