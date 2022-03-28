@@ -1,10 +1,9 @@
 package ru.msu.cmc.realestatemanager.model.dao.impl;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import ru.msu.cmc.realestatemanager.model.HibernateConfiguration;
 import ru.msu.cmc.realestatemanager.model.dao.BaseDAO;
-
-import javax.swing.*;
 
 public class BaseDAOImpl<SomeEntity> implements BaseDAO<SomeEntity> {
 
@@ -15,7 +14,7 @@ public class BaseDAOImpl<SomeEntity> implements BaseDAO<SomeEntity> {
     }
 
     @Override
-    public void add(SomeEntity entity) {
+    public void add(SomeEntity entity) throws HibernateException {
         Session session = HibernateConfiguration.getSessionFactory().openSession();
         session.beginTransaction();
         session.save(entity);
@@ -24,7 +23,7 @@ public class BaseDAOImpl<SomeEntity> implements BaseDAO<SomeEntity> {
     }
 
     @Override
-    public void update(SomeEntity entity) {
+    public void update(SomeEntity entity) throws HibernateException {
         Session session = HibernateConfiguration.getSessionFactory().openSession();
         session.beginTransaction();
         session.update(entity);
@@ -33,7 +32,7 @@ public class BaseDAOImpl<SomeEntity> implements BaseDAO<SomeEntity> {
     }
 
     @Override
-    public void delete(SomeEntity entity) {
+    public void delete(SomeEntity entity) throws HibernateException {
         Session session = HibernateConfiguration.getSessionFactory().openSession();
         session.beginTransaction();
         session.delete(entity);
@@ -42,15 +41,8 @@ public class BaseDAOImpl<SomeEntity> implements BaseDAO<SomeEntity> {
     }
 
     @Override
-    public SomeEntity getById(Integer id) {
+    public SomeEntity getById(Integer id) throws HibernateException {
         Session session = HibernateConfiguration.getSessionFactory().openSession();
-
-        try {
-            return session.load(this.entityClass, id);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Ошибка 'getClientById'",
-                    JOptionPane.WARNING_MESSAGE);
-        }
-        return null;
+        return session.load(this.entityClass, id);
     }
 }
