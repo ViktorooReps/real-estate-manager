@@ -1,11 +1,11 @@
 package ru.msu.cmc.realestatemanager.model.entity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import ru.msu.cmc.realestatemanager.model.util.HashMapConverter;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.Map;
 
 @Entity
@@ -13,12 +13,15 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
+@Transactional
 @AllArgsConstructor
 @NoArgsConstructor
 public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "offer_id", nullable = false)
+    @Column(name = "offer_id", columnDefinition = "serial",
+            insertable = false,
+            updatable = false)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

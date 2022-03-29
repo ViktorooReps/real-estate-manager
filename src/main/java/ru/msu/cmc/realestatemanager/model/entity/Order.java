@@ -7,6 +7,7 @@ import org.hibernate.annotations.TypeDef;
 import ru.msu.cmc.realestatemanager.model.util.HashMapConverter;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.Map;
 
 @Entity
@@ -14,13 +15,17 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
+@Transactional
 @AllArgsConstructor
 @NoArgsConstructor
 @TypeDef(name = "json", typeClass = JsonMapType.class)
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id", nullable = false)
+    @Column(name = "order_id",
+            columnDefinition = "serial",
+            insertable = false,
+            updatable = false)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

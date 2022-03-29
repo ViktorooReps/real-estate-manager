@@ -4,31 +4,33 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 
 @Entity
 @Table(name = "clients")
 @Getter
 @Setter
 @ToString
+@Transactional
 @AllArgsConstructor
 @NoArgsConstructor
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "client_id", nullable = false)
+    @Column(name = "client_id",
+            columnDefinition = "serial",
+            insertable = false,
+            updatable = false)
     private Integer id;
 
-    @Lob
     @Column(name = "client_name")
     @Type(type = "org.hibernate.type.TextType")
     private String clientName;
 
-    @Lob
     @Column(name = "email")
     @Type(type = "org.hibernate.type.TextType")
     private String email;
 
-    @Lob
     @Column(name = "phone_number")
     @Type(type = "org.hibernate.type.TextType")
     private String phoneNumber;

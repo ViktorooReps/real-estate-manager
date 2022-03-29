@@ -5,6 +5,9 @@ import org.hibernate.Session;
 import ru.msu.cmc.realestatemanager.model.HibernateConfiguration;
 import ru.msu.cmc.realestatemanager.model.dao.BaseDAO;
 
+import javax.transaction.Transactional;
+
+@Transactional
 public class BaseDAOImpl<SomeEntity> implements BaseDAO<SomeEntity> {
 
     Class<SomeEntity> entityClass;
@@ -15,34 +18,34 @@ public class BaseDAOImpl<SomeEntity> implements BaseDAO<SomeEntity> {
 
     @Override
     public void add(SomeEntity entity) throws HibernateException {
-        Session session = HibernateConfiguration.getSessionFactory().openSession();
+        Session session = HibernateConfiguration.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         session.save(entity);
         session.getTransaction().commit();
-        session.close();
     }
 
     @Override
     public void update(SomeEntity entity) throws HibernateException {
-        Session session = HibernateConfiguration.getSessionFactory().openSession();
+        Session session = HibernateConfiguration.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         session.update(entity);
         session.getTransaction().commit();
-        session.close();
     }
 
     @Override
     public void delete(SomeEntity entity) throws HibernateException {
-        Session session = HibernateConfiguration.getSessionFactory().openSession();
+        Session session = HibernateConfiguration.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         session.delete(entity);
         session.getTransaction().commit();
-        session.close();
     }
 
     @Override
     public SomeEntity getById(Integer id) throws HibernateException {
-        Session session = HibernateConfiguration.getSessionFactory().openSession();
-        return session.load(this.entityClass, id);
+        Session session = HibernateConfiguration.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        SomeEntity result = session.load(this.entityClass, id);
+        session.getTransaction().commit();
+        return result;
     }
 }

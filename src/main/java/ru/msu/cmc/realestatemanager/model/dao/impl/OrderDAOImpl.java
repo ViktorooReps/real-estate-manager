@@ -8,11 +8,13 @@ import ru.msu.cmc.realestatemanager.model.dao.OrderDAO;
 import ru.msu.cmc.realestatemanager.model.entity.Order;
 
 import javax.persistence.criteria.*;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+@Transactional
 public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
 
     public OrderDAOImpl() {
@@ -21,7 +23,8 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
 
     @Override
     public Collection<Order> getOrdersByFilter(Filter filter) throws HibernateException {
-        Session session = HibernateConfiguration.getSessionFactory().openSession();
+        Session session = HibernateConfiguration.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = builder.createQuery(Order.class);
         Root<Order> root = criteriaQuery.from(Order.class);
@@ -118,6 +121,8 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
         if (predicates.size() != 0)
             criteriaQuery.where(predicates.toArray(new Predicate[0]));
 
-        return session.createQuery(criteriaQuery).getResultList();
+        List<Order> result = session.createQuery(criteriaQuery).getResultList();
+        session.getTransaction().commit();
+        return result;
     }
 }

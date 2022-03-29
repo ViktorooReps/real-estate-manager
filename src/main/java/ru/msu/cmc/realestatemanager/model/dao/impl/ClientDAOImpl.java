@@ -10,10 +10,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Transactional
 public class ClientDAOImpl extends BaseDAOImpl<Client> implements ClientDAO {
 
     public ClientDAOImpl() {
@@ -22,8 +24,8 @@ public class ClientDAOImpl extends BaseDAOImpl<Client> implements ClientDAO {
 
     @Override
     public Collection<Client> getClientsByFilter(Filter filter) throws HibernateException {
-
-        Session session = HibernateConfiguration.getSessionFactory().openSession();
+        Session session = HibernateConfiguration.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Client> criteriaQuery = builder.createQuery(Client.class);
         Root<Client> root = criteriaQuery.from(Client.class);
@@ -45,6 +47,8 @@ public class ClientDAOImpl extends BaseDAOImpl<Client> implements ClientDAO {
         if (predicates.size() != 0)
             criteriaQuery.where(predicates.toArray(new Predicate[0]));
 
-        return session.createQuery(criteriaQuery).getResultList();
+        List<Client> result = session.createQuery(criteriaQuery).getResultList();
+        session.getTransaction().commit();
+        return result;
     }
 }
