@@ -5,6 +5,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.util.Objects;
 
 @Entity
 @Table(name = "clients")
@@ -34,4 +35,17 @@ public class Client {
     @Column(name = "phone_number")
     @Type(type = "org.hibernate.type.TextType")
     private String phoneNumber;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return getId().equals(client.getId()) && Objects.equals(getClientName(), client.getClientName()) && Objects.equals(getEmail(), client.getEmail()) && Objects.equals(getPhoneNumber(), client.getPhoneNumber());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getClientName(), getEmail(), getPhoneNumber());
+    }
 }

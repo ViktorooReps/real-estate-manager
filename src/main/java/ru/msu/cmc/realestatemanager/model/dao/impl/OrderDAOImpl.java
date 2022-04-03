@@ -86,13 +86,13 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
         }
         if (filter.getFloor() != null) {
             Integer floor = filter.getFloor();
-            Predicate moreThanMin = builder.ge(root.get("floorMin"), builder.literal(floor));
-            Predicate lessThanMax = builder.le(root.get("floorMax"), builder.literal(floor));
+            Predicate moreThanMin = builder.ge(builder.literal(floor), root.get("floorMin"));
+            Predicate lessThanMax = builder.le(builder.literal(floor), root.get("floorMax"));
             predicates.add(builder.and(moreThanMin, lessThanMax));
         }
         if (filter.getBuildingState() != null) {
             String pattern = "%" + filter.getBuildingState() + "%"; // Any building state containing substring
-            predicates.add(builder.like(root.get("building_state"), pattern));
+            predicates.add(builder.like(root.get("buildingState"), pattern));
         }
         if (filter.getTransport() != null) {
             Map<String, Integer> transport = filter.getTransport();
@@ -110,12 +110,18 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
             }
         }
         if (filter.getLocation() != null) {
-            String pattern = "%" + filter.getLocation() + "%"; // Any location containing substring
-            predicates.add(builder.like(root.get("location"), pattern));
+            String location = filter.getLocation();
+            Expression<Boolean> requestedLocations = builder.function(
+                    "json_extract_path_text",
+                    String.class,
+                    root.get("requestedLocations"),
+                    builder.literal(location)
+            ).as(Boolean.class);
+            predicates.add(builder.isTrue(requestedLocations));
         }
         if (filter.getStartingPrice() != null) {
             Integer startingPrice = filter.getStartingPrice();
-            predicates.add(builder.le(builder.literal(startingPrice), root.get("startingPrice")));
+            predicates.add(builder.le(builder.literal(startingPrice), root.get("priceMax")));
         }
 
         if (predicates.size() != 0)

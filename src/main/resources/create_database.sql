@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS Orders(
     requested_space_min JSON,
     requested_commodities JSON,
     floor_min INTEGER CHECK ( floor_min > 0 ),
-    floor_max INTEGER CHECK ( floor_max > floor_min ),
+    floor_max INTEGER CHECK ( floor_max >= floor_min ),
     building_state TEXT,
     requested_transport_max JSON,
     requested_locations JSON,

@@ -18,34 +18,38 @@ public class BaseDAOImpl<SomeEntity> implements BaseDAO<SomeEntity> {
 
     @Override
     public void add(SomeEntity entity) throws HibernateException {
-        Session session = HibernateConfiguration.getSessionFactory().getCurrentSession();
+        Session session = HibernateConfiguration.getSessionFactory().openSession();
         session.beginTransaction();
         session.save(entity);
         session.getTransaction().commit();
+        session.close();
     }
 
     @Override
     public void update(SomeEntity entity) throws HibernateException {
-        Session session = HibernateConfiguration.getSessionFactory().getCurrentSession();
+        Session session = HibernateConfiguration.getSessionFactory().openSession();
         session.beginTransaction();
         session.update(entity);
         session.getTransaction().commit();
+        session.close();
     }
 
     @Override
     public void delete(SomeEntity entity) throws HibernateException {
-        Session session = HibernateConfiguration.getSessionFactory().getCurrentSession();
+        Session session = HibernateConfiguration.getSessionFactory().openSession();
         session.beginTransaction();
         session.delete(entity);
         session.getTransaction().commit();
+        session.close();
     }
 
     @Override
     public SomeEntity getById(Integer id) throws HibernateException {
-        Session session = HibernateConfiguration.getSessionFactory().getCurrentSession();
+        Session session = HibernateConfiguration.getSessionFactory().openSession();
         session.beginTransaction();
         SomeEntity result = session.load(this.entityClass, id);
         session.getTransaction().commit();
+        session.close();
         return result;
     }
 }
