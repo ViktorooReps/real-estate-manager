@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Edit order</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        .indent {
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="general :: page-header"> </div>
+
+<div class="indent">
+    <div id="offerInfo">
+        <a th:if="${orderedById != null}" th:href="'/client?clientId=' + ${orderedById}">
+            <span th:text="'Ordered by: ' + ${clientService.getById(orderedById).getClientName()}"> </span>
+        </a>
+    </div>
+
+    <form method="get" action="/editOrder">
+        <fieldset>
+            <input type="hidden" name="orderId" th:value="${orderId}"/>
+            <input type="hidden" name="orderedById" th:value="${orderedById}"/>
+
+            <label for="ct">Contract type:</label>
+            <input type="text" id="ct" name="contractType" required th:value="${contractType}"><br>
+
+            <label for="bs">Building state:</label>
+            <input type="text" id="bs" name="buildingState" th:value="${buildingState}"><br>
+
+            <label for="minf">Minimum floor:</label>
+            <input type="text" id="minf" name="floorMin" th:value="${floorMin}"><br>
+
+            <label for="maxf">Maximum floor:</label>
+            <input type="text" id="maxf" name="floorMax" th:value="${floorMax}"><br>
+
+            <label for="mp">Maximum price:</label>
+            <input type="text" id="mp" name="priceMax" th:value="${priceMax}"><br>
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Estate types:</legend>
+            <div th:if="${requestedEstateTypes != null}">
+                <div th:each="estateType : ${requestedEstateTypes.keySet()}">
+                    <label th:for="${'id__' + estateType}" th:text="${estateType + ':'}"/>
+                    <input type="checkbox" th:name="${'requestedEstateTypes__' + estateType}" th:id="${'id__' + estateType}" th:checked="${requestedEstateTypes.get(estateType)}" value="True">
+                    <input type="hidden" th:name="${'requestedEstateTypes__' + estateType}" value="False">
+                </div>
+            </div>
+            <label for="net">New option:</label>
+            <input type="text" id="net" name="newEstateType">
+            <input id="addEstateType" type="submit" value="Add option" class="btn btn-primary">
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Estate facades:</legend>
+            <div th:if="${requestedEstateFacades != null}">
+                <div th:each="estateFacade : ${requestedEstateFacades.keySet()}">
+                    <label th:for="${'id__' + estateFacade}" th:text="${estateFacade + ':'}"/>
+                    <input type="checkbox" th:name="${'requestedEstateFacades__' + estateFacade}" th:id="${'id__' + estateFacade}" th:checked="${requestedEstateFacades.get(estateFacade)}" value="True">
+                    <input type="hidden" th:name="${'requestedEstateFacades__' + estateFacade}" value="False">
+                </div>
+            </div>
+            <label for="nef">New option:</label>
+            <input type="text" id="nef" name="newEstateType">
+            <input id="addEstateFacade" type="submit" value="Add option" class="btn btn-primary">
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Locations:</legend>
+            <div th:if="${requestedLocations != null}">
+                <div th:each="location : ${requestedLocations.keySet()}">
+                    <label th:for="${'id__' + location}" th:text="${location + ':'}"/>
+                    <input type="checkbox" th:name="${'requestedLocations__' + location}" th:id="${'id__' + location}" th:checked="${requestedLocations.get(location)}" value="True">
+                    <input type="hidden" th:name="${'requestedLocations__' + location}" value="False">
+                </div>
+            </div>
+            <label for="nc">New option:</label>
+            <input type="text" id="nl" name="newLocation">
+            <input id="addLocation" type="submit" value="Add option" class="btn btn-primary">
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Commodities:</legend>
+            <div th:if="${requestedCommodities != null}">
+                <div th:each="commodity : ${requestedCommodities.keySet()}">
+                    <label th:for="${'id__' + commodity}" th:text="${commodity + ':'}"/>
+                    <input type="checkbox" th:name="${'requestedCommodities__' + commodity}" th:id="${'id__' + commodity}" th:checked="${requestedCommodities.get(commodity)}" value="True">
+                    <input type="hidden" th:name="${'requestedCommodities__' + commodity}" value="False">
+                </div>
+            </div>
+            <label for="nc">New option:</label>
+            <input type="text" id="nc" name="newCommodity">
+            <input id="addCommodity" type="submit" value="Add option" class="btn btn-primary">
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Minimum room space:</legend>
+            <div th:if="${requestedSpaceMin != null}">
+                <div th:each="roomName : ${requestedSpaceMin.keySet()}">
+                    <label th:for="${'id__' + roomName}" th:text="${roomName + ':'}"/>
+                    <input type="text" th:name="${'requestedSpaceMin__' + roomName}" th:id="${'id__' + roomName}" th:value="${(requestedSpaceMin.keySet().contains(roomName))? requestedSpaceMin.get(roomName) : '1'}">
+                    <input type="hidden" th:name="${'requestedSpaceMin__' + roomName}" value="False">
+                </div>
+            </div>
+            <label for="nr">New option:</label>
+            <input type="text" id="nr" name="newRoom">
+            <input id="addRoom" type="submit" value="Add option" class="btn btn-primary">
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Transport distance:</legend>
+            <div th:if="${requestedTransportMax != null}">
+                <div th:each="transportName : ${requestedTransportMax.keySet()}">
+                    <label th:for="${'id__' + transportName}" th:text="${transportName + ':'}"/>
+                    <input type="text" th:name="${'requestedTransportMax__' + transportName}" th:id="${'id__' + transportName}" th:value="${(requestedTransportMax.keySet().contains(transportName))? requestedTransportMax.get(transportName) : '1'}">
+                    <input type="hidden" th:name="${'requestedTransportMax__' + transportName}" value="False">
+                </div>
+            </div>
+            <label for="nt">New option:</label>
+            <input type="text" id="nt" name="newTransport">
+            <input id="addTransport" type="submit" value="Add option" class="btn btn-primary">
+        </fieldset><br>
+        <input id="submitButton" type="submit" formmethod="post" formaction="/saveOrder" value="Save" class="btn btn-primary">
+    </form>
+</div>
+
+<div th:replace="general :: site-script"></div>
+
+</body>
+</html>

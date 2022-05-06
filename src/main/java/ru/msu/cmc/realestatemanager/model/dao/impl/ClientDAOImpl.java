@@ -2,6 +2,7 @@ package ru.msu.cmc.realestatemanager.model.dao.impl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 import ru.msu.cmc.realestatemanager.model.HibernateConfiguration;
 import ru.msu.cmc.realestatemanager.model.dao.ClientDAO;
 import ru.msu.cmc.realestatemanager.model.entity.Client;
@@ -16,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Transactional
+@Repository
 public class ClientDAOImpl extends BaseDAOImpl<Client> implements ClientDAO {
 
     public ClientDAOImpl() {

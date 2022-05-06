@@ -48,6 +48,14 @@ public class ClientDAOTest {
     }
 
     @Test
+    public void testUpdateAndId() {
+        this.clientTest1.setClientName("NewName");
+        this.dao.update(clientTest1);
+        Client test1 = this.dao.getById(this.clientTest1.getId());
+        assertEquals(test1, this.clientTest1);
+    }
+
+    @Test
     public void testGetByName() {
         Collection<Client> allTestNames = this.dao.getClientsByFilter(
                 ClientDAO.getFilterBuilder()

@@ -60,7 +60,7 @@ public class Order {
     private Integer floorMax;
 
     @Lob
-    @Column(name = "building_state", nullable = false)
+    @Column(name = "building_state")
     @Type(type = "org.hibernate.type.TextType")
     private String buildingState;
 

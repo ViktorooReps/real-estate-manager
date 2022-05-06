@@ -3,6 +3,7 @@ package ru.msu.cmc.realestatemanager.model.dao.impl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 import ru.msu.cmc.realestatemanager.model.HibernateConfiguration;
 import ru.msu.cmc.realestatemanager.model.dao.OrderDAO;
 import ru.msu.cmc.realestatemanager.model.entity.Order;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Transactional
+@Repository
 public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
 
     public OrderDAOImpl() {

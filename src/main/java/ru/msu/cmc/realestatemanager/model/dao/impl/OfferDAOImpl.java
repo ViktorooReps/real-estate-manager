@@ -2,6 +2,7 @@ package ru.msu.cmc.realestatemanager.model.dao.impl;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 import ru.msu.cmc.realestatemanager.model.HibernateConfiguration;
 import ru.msu.cmc.realestatemanager.model.dao.OfferDAO;
 import ru.msu.cmc.realestatemanager.model.entity.Offer;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Transactional
+@Repository
 public class OfferDAOImpl extends BaseDAOImpl<Offer> implements OfferDAO {
 
     private Predicate getChoicePredicate(
@@ -56,6 +58,8 @@ public class OfferDAOImpl extends BaseDAOImpl<Offer> implements OfferDAO {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Offer> criteriaQuery = builder.createQuery(Offer.class);
         Root<Offer> root = criteriaQuery.from(Offer.class);
+
+        System.out.println(filter);
 
         List<Predicate> predicates = new ArrayList<>();
         if (filter.getContractType() != null) {

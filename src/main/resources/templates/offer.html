@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        .indent {
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-top: 20px;
+        }
+    </style>
+    <title></title>
+</head>
+
+<body>
+<div th:replace="general :: page-header"> </div>
+
+<div class="indent">
+    <div id="offerInfo">
+        <h4 th:text="${offer.getContractType()}"></h4>
+        <a th:if="${offer.getOfferedBy() != null}" th:href="'/client?clientId=' + ${offer.getOfferedBy().getId()}">
+            <span th:text="'Offered by: ' + ${offer.getOfferedBy().getClientName()}"> </span>
+        </a><br><br>
+        <p th:if="${offer.getContractType() != null}" th:text="'Contract type: ' + ${offer.getContractType()}"></p>
+        <p th:if="${offer.getEstateType() != null}" th:text="'Estate type: ' + ${offer.getEstateType()}"></p>
+        <p th:if="${offer.getEstateFacade() != null}" th:text="'Estate facade: ' + ${offer.getEstateFacade()}"></p>
+        <p th:if="${offer.getBuildingState() != null}" th:text="'Building state: ' + ${offer.getBuildingState()}"></p>
+        <p th:if="${offer.getLocation() != null}" th:text="'Location: ' + ${offer.getLocation()}"></p>
+        <p th:if="${offer.getAddress() != null}" th:text="'Address: ' + ${offer.getAddress()}"></p>
+        <p th:if="${offer.getFloor() != null}" th:text="'Floor: ' + ${offer.getFloor()}"></p>
+        <p th:if="${offer.getStartingPrice() != null}" th:text="'Starting price: ' + ${offer.getStartingPrice()}"></p>
+        <p th:if="${offer.getCommodities() != null}" th:text="'Commodities (presence): ' + ${conversionService.explainBoolMap(conversionService.getMap(offer.getCommodities()))}"></p>
+        <p th:if="${offer.getSpace() != null}" th:text="'Room space (square meters): ' + ${conversionService.explainIntMap(conversionService.getMap(offer.getSpace()))}"></p>
+        <p th:if="${offer.getTransport() != null}" th:text="'Transport distance (min): ' + ${conversionService.explainIntMap(conversionService.getMap(offer.getTransport()))}"></p>
+    </div>
+
+    <!--edit delete offer button group-->
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <form style="margin-right: 30px" method="get" action="/editOffer">
+                <input type="hidden" name="offerId" th:value="${offer.getId()}"/>
+                <input type="hidden" name="offeredById" th:value="${offer.getOfferedBy().getId()}"/>
+                <button id="editButton" type="submit" class="btn btn-secondary">Edit offer</button>
+            </form>
+            <form method="post" action="/removeOffer">
+                <input type="hidden" name="offerId" th:value="${offer.getId()}"/>
+                <button id="deleteButton" type="submit" class="btn btn-secondary">Delete offer</button>
+            </form>
+        </div>
+    </div>
+    <!--end of button group-->
+
+</div>
+
+<div th:replace="general :: site-script"></div>
+
+</body>
+</html>

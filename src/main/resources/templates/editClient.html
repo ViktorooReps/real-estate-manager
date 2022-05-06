@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Edit client</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        .indent {
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="general :: page-header"> </div>
+
+<div class="indent">
+    <form method="post" action="/saveClient">
+
+        <input type="hidden" name="clientId" th:value="${client.getId()}"/>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required th:value="${client.getClientName()}"><br><br>
+
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required th:value="${client.getEmail()}"><br><br>
+
+        <label for="phoneNumber">Phone:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" required th:value="${client.getPhoneNumber()}"><br><br>
+
+        <input id="submitButton" type="submit" value="Save" class="btn btn-primary">
+    </form>
+</div>
+
+<div th:replace="general :: site-script"></div>
+
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Offers</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        .indent {
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="general :: page-header"></div>
+
+<div class="indent">
+    <form method="get" action="/searchOrder">
+        <fieldset>
+            <label for="ct">Contract type:</label>
+            <input type="text" id="ct" name="contractType" th:value="${(contractType == null)? '' : contractType}"><br>
+
+            <label for="et">Estate type:</label>
+            <input type="text" id="et" name="estateType" th:value="${(estateType == null)? '' : estateType}"><br>
+
+            <label for="ef">Estate facade:</label>
+            <input type="text" id="ef" name="estateFacade" th:value="${(estateFacade == null)? '' : estateFacade}"><br>
+
+            <label for="bs">Building state:</label>
+            <input type="text" id="bs" name="buildingState" th:value="${(buildingState == null)? '' : buildingState}"><br>
+
+            <label for="l">Location:</label>
+            <input type="text" id="l" name="location" th:value="${(location == null)? '' : location}"><br>
+
+            <label for="f">Floor:</label>
+            <input type="text" id="f" name="floor" th:value="${(floor == null)? '' : floor}"><br>
+
+            <label for="sp">Starting price:</label>
+            <input type="text" id="sp" name="startingPrice" th:value="${(startingPrice == null)? '' : startingPrice}"><br>
+
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Commodities:</legend>
+            <div th:each="commodity : ${commodities.keySet()}">
+                <label th:for="${'id__' + commodity}" th:text="${commodity + ':'}"/>
+                <input type="checkbox" th:name="${'commodities__' + commodity}" th:id="${'id__' + commodity}" th:checked="${commodities.get(commodity)}" value="True">
+                <input type="hidden" th:name="${'commodities__' + commodity}" value="False">
+            </div>
+            <label for="nc">New option:</label>
+            <input type="text" id="nc" name="newCommodity">
+            <input id="addCommodity" type="submit" value="Add option" class="btn btn-primary">
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Room space:</legend>
+            <div th:each="roomName : ${roomSpace.keySet()}">
+                <label th:for="${'id__' + roomName}" th:text="${roomName + ':'}"/>
+                <input type="text" th:name="${'roomSpace__' + roomName}" th:id="${'id__' + roomName}" th:value="${(roomSpace.keySet().contains(roomName))? roomSpace.get(roomName) : '1'}">
+                <input type="hidden" th:name="${'roomSpace__' + roomName}" value="False">
+            </div>
+            <label for="nr">New option:</label>
+            <input type="text" id="nr" name="newRoom">
+            <input id="addRoom" type="submit" value="Add option" class="btn btn-primary">
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Transport distance:</legend>
+            <div th:each="transportName : ${transportDistance.keySet()}">
+                <label th:for="${'id__' + transportName}" th:text="${transportName + ':'}"/>
+                <input type="text" th:name="${'transportDistance__' + transportName}" th:id="${'id__' + transportName}" th:value="${(transportDistance.keySet().contains(transportName))? transportDistance.get(transportName) : '1'}">
+                <input type="hidden" th:name="${'transportDistance__' + transportName}" value="False">
+            </div>
+            <label for="nt">New option:</label>
+            <input type="text" id="nt" name="newTransport">
+            <input id="addTransport" type="submit" value="Add option" class="btn btn-primary">
+        </fieldset><br>
+
+        <input id="submitButton" type="submit" value="Search" class="btn btn-primary">
+    </form>
+
+    <h3 class="text-center">Search results</h3>
+
+    <table class="table table-bordered table-warning">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col"> Contract type</th>
+            <th scope="col"> Estate types (match)</th>
+            <th scope="col"> Maximum price</th>
+            <th scope="col"> Locations (match)</th>
+            <th scope="col"> Maximum transport distance (min)</th>
+            <th scope="col"> Commodities (presence)</th>
+            <th scope="col"> Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}" th:object="${order}">
+            <td>
+                <span th:text="${order.getContractType()}"> </span>
+            </td>
+            <td>
+                <span th:text="${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedEstateTypes()))}"> </span>
+            </td>
+            <td>
+                <span th:text="${order.getPriceMax()}"> </span>
+            </td>
+            <td>
+                <span th:text="${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedLocations()))}"> </span>
+            </td>
+            <td>
+                <span th:text="${conversionService.explainIntMap(conversionService.getMap(order.getRequestedTransportMax()))}"> </span>
+            </td>
+            <td>
+                <span th:text="${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedCommodities()))}"> </span>
+            </td>
+            <td>
+                <form method="get" action="/order">
+                    <input type="hidden" name="orderId" th:value="${order.getId()}">
+                    <button id="openOrderButton" type="submit" class="btn btn-secondary">Open</button>
+                </form>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+
+<div th:replace="general :: site-script"></div>
+
+</body>
+</html>

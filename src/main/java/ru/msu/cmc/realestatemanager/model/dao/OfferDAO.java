@@ -2,6 +2,7 @@ package ru.msu.cmc.realestatemanager.model.dao;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import ru.msu.cmc.realestatemanager.model.entity.Offer;
 
 import java.util.Collection;
@@ -12,6 +13,7 @@ public interface OfferDAO extends BaseDAO<Offer> {
     // filter represents potential order
     @Builder
     @Getter
+    @ToString
     class Filter {
         String contractType;
         Map<String, Boolean> requestedEstateTypes;

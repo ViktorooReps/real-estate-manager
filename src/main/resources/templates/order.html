@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        .indent {
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-top: 20px;
+        }
+    </style>
+    <title></title>
+</head>
+
+<body>
+<div th:replace="general :: page-header"> </div>
+
+<div class="indent">
+    <div id="orderInfo">
+        <h4 th:text="${order.getContractType()}"></h4>
+        <a th:if="${order.getOrderedBy() != null}" th:href="'/client?clientId=' + ${order.getOrderedBy().getId()}">
+            <span th:text="'Ordered by: ' + ${order.getOrderedBy().getClientName()}"> </span>
+        </a><br><br>
+        <p th:if="${order.getContractType() != null}" th:text="'Contract type: ' + ${order.getContractType()}"></p>
+        <p th:if="${order.getBuildingState() != null}" th:text="'Building state: ' + ${order.getBuildingState()}"></p>
+        <p th:if="${order.getFloorMin() != null}" th:text="'Minimum floor: ' + ${order.getFloorMin()}"></p>
+        <p th:if="${order.getFloorMax() != null}" th:text="'Maximum floor: ' + ${order.getFloorMax()}"></p>
+        <p th:if="${order.getPriceMax() != null}" th:text="'Maximum price: ' + ${order.getPriceMax()}"></p>
+        <p th:if="${order.getRequestedEstateTypes() != null}" th:text="'Estate types (match): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedEstateTypes()))}"></p>
+        <p th:if="${order.getRequestedEstateFacades() != null}" th:text="'Estate facades (match): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedEstateFacades()))}"></p>
+        <p th:if="${order.getRequestedLocations() != null}" th:text="'Locations (match): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedLocations()))}"></p>
+        <p th:if="${order.getRequestedCommodities() != null}" th:text="'Commodities (presence): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedCommodities()))}"></p>
+        <p th:if="${order.getRequestedSpaceMin() != null}" th:text="'Mininmum room space (square meters): ' + ${conversionService.explainIntMap(conversionService.getMap(order.getRequestedSpaceMin()))}"></p>
+        <p th:if="${order.getRequestedTransportMax() != null}" th:text="'Maximum transport distance (min): ' + ${conversionService.explainIntMap(conversionService.getMap(order.getRequestedTransportMax()))}"></p>
+    </div>
+
+    <!--edit delete offer button group-->
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <form style="margin-right: 30px" method="get" action="/editOrder">
+                <input type="hidden" name="orderId" th:value="${order.getId()}"/>
+                <button id="editButton" type="submit" class="btn btn-secondary">Edit order</button>
+            </form>
+            <form method="post" action="/removeOrder">
+                <input type="hidden" name="orderId" th:value="${order.getId()}"/>
+                <button id="deleteButton" type="submit" class="btn btn-secondary">Delete order</button>
+            </form>
+        </div>
+    </div>
+    <!--end of button group-->
+
+</div>
+
+<div th:replace="general :: site-script"></div>
+
+</body>
+</html>
