@@ -237,7 +237,7 @@ public class OfferController {
 
             if (key.startsWith("floorMin"))
                 floorMin = Integer.parseInt(value);
-            if (key.startsWith("floorMin"))
+            if (key.startsWith("floorMax"))
                 floorMax = Integer.parseInt(value);
             if (key.startsWith("priceMax"))
                 priceMax = Integer.parseInt(value);

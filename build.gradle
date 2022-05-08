@@ -53,6 +53,7 @@ dependencies {
 	implementation 'org.json:json:20220320'
 	implementation 'org.thymeleaf:thymeleaf-spring4:3.0.15.RELEASE'
 	implementation 'com.vdurmont:emoji-java:5.1.1'
+	implementation 'org.testng:testng:7.1.0'
 	compileOnly 'org.projectlombok:lombok'
 	compileOnly 'com.fasterxml.jackson.core:jackson-databind'
 	compileOnly 'com.bazarnazar:pgjson'

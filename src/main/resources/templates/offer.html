@@ -18,6 +18,8 @@
 <div th:replace="general :: page-header"> </div>
 
 <div class="indent">
+    <p hidden id="offerId" th:value="${offer.getId()}">
+
     <div id="offerInfo">
         <h4 th:text="${offer.getContractType()}"></h4>
         <a th:if="${offer.getOfferedBy() != null}" th:href="'/client?clientId=' + ${offer.getOfferedBy().getId()}">

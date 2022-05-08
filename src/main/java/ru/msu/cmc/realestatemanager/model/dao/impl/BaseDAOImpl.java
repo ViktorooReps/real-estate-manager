@@ -1,6 +1,7 @@
 package ru.msu.cmc.realestatemanager.model.dao.impl;
 
 import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import ru.msu.cmc.realestatemanager.model.HibernateConfiguration;
