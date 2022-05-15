@@ -1,5 +1,6 @@
 package ru.msu.cmc.realestatemanager.controller;
 
+import com.sun.xml.bind.v2.TODO;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.msu.cmc.realestatemanager.controller.util.Converter;
 import ru.msu.cmc.realestatemanager.model.DAOFactory;
 import ru.msu.cmc.realestatemanager.model.dao.ClientDAO;
+import ru.msu.cmc.realestatemanager.model.dao.OfferDAO;
 import ru.msu.cmc.realestatemanager.model.dao.OrderDAO;
 import ru.msu.cmc.realestatemanager.model.entity.Client;
+import ru.msu.cmc.realestatemanager.model.entity.Offer;
 import ru.msu.cmc.realestatemanager.model.entity.Order;
 
 import java.util.*;
@@ -20,13 +23,34 @@ import java.util.*;
 public class OrderController {
 
     @Autowired
+    private final OfferDAO offerDAO = DAOFactory.getInstance().getOfferDAO();
+
+    @Autowired
     private final OrderDAO orderDAO = DAOFactory.getInstance().getOrderDAO();
 
     @Autowired
     private final ClientDAO clientDAO = DAOFactory.getInstance().getClientDAO();
 
     @GetMapping("/order")
-    public String orderPage(@RequestParam(name = "orderId") Integer orderId, Model model) {
+    public String orderPage(@RequestParam Map<String, String> allParams, Model model) {
+        Integer orderId = null;
+        Map<String, Boolean> includeAttributes = new HashMap<>();
+        for (String key : allParams.keySet()) {
+            String value = allParams.get(key);
+            if (key.startsWith("orderId"))
+                orderId = Integer.parseInt(value);
+
+            if (key.startsWith("includeAttribute")) {
+                String attributeName = key.split("__")[1];
+                includeAttributes.put(attributeName, Objects.equals(value, "True"));
+            }
+        }
+
+        if (orderId == null) {
+            model.addAttribute("error_msg", "Cannot show order details with no offer id!");
+            return "errorPage";
+        }
+
         try {
             Order order = orderDAO.getById(orderId);
             if (order == null) {
@@ -34,8 +58,45 @@ public class OrderController {
                 return "errorPage";
             }
 
+            OfferDAO.Filter.FilterBuilder filterBuilder = OfferDAO.Filter.builder();
+            if (includeAttributes.getOrDefault("ContractType", true))
+                filterBuilder.contractType(order.getContractType());
+            if (includeAttributes.getOrDefault("BuildingState", true))
+                filterBuilder.buildingState(order.getBuildingState());
+            if (includeAttributes.getOrDefault("FloorMin", true))
+                filterBuilder.floorMin(order.getFloorMin());
+            if (includeAttributes.getOrDefault("FloorMax", true))
+                filterBuilder.floorMax(order.getFloorMax());
+            if (includeAttributes.getOrDefault("PriceMax", true))
+                filterBuilder.startingPrice(order.getPriceMax());
+            if (includeAttributes.getOrDefault("RequestedEstateTypes", true)) {
+                Map<String, Boolean> estateTypes = Converter.getMap(order.getRequestedEstateTypes());
+                filterBuilder.requestedEstateTypes((estateTypes.size() > 0)? estateTypes : null);
+            }
+            if (includeAttributes.getOrDefault("RequestedEstateFacades", true)) {
+                Map<String, Boolean> estateFacades = Converter.getMap(order.getRequestedEstateFacades());
+                filterBuilder.requestedEstateFacades((estateFacades.size() > 0)? estateFacades : null);
+            }
+            if (includeAttributes.getOrDefault("RequestedCommodities", true)) {
+                Map<String, Boolean> commodities = Converter.getMap(order.getRequestedCommodities());
+                filterBuilder.requestedCommodities((commodities.size() > 0)? commodities : null);
+            }
+            if (includeAttributes.getOrDefault("RequestedSpaceMin", true)) {
+                Map<String, Integer> space = Converter.getIntMap(order.getRequestedSpaceMin());
+                filterBuilder.requestedSpaceMin((space.size() > 0)? space : null);
+            }
+            if (includeAttributes.getOrDefault("RequestedTransportMax", true)) {
+                Map<String, Integer> transport = Converter.getIntMap(order.getRequestedTransportMax());
+                filterBuilder.requestedTransportMax((transport.size() > 0)? transport : null);
+            }
+
+            Collection<Offer> suitableOffers = offerDAO.getOffersByFilter(filterBuilder.build());
+
             model.addAttribute("order", order);
             model.addAttribute("conversionService", new Converter());
+
+            model.addAttribute("includeAttributes", includeAttributes);
+            model.addAttribute("suitableOffers", suitableOffers);
             return "order";
         } catch (HibernateException e) {
             model.addAttribute("error_msg", e.getMessage());

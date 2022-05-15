@@ -18,26 +18,10 @@
 <div th:replace="general :: page-header"> </div>
 
 <div class="indent">
-    <p hidden id="orderId" th:value="${order.getId()}">
-
-    <div id="orderInfo">
-        <h4 th:text="${order.getContractType()}"></h4>
-        <a th:if="${order.getOrderedBy() != null}" th:href="'/client?clientId=' + ${order.getOrderedBy().getId()}">
-            <span th:text="'Ordered by: ' + ${order.getOrderedBy().getClientName()}"> </span>
-        </a><br><br>
-        <p th:if="${order.getContractType() != null}" th:text="'Contract type: ' + ${order.getContractType()}"></p>
-        <p th:if="${order.getBuildingState() != null}" th:text="'Building state: ' + ${order.getBuildingState()}"></p>
-        <p th:if="${order.getFloorMin() != null}" th:text="'Minimum floor: ' + ${order.getFloorMin()}"></p>
-        <p th:if="${order.getFloorMax() != null}" th:text="'Maximum floor: ' + ${order.getFloorMax()}"></p>
-        <p th:if="${order.getPriceMax() != null}" th:text="'Maximum price: ' + ${order.getPriceMax()}"></p>
-        <p th:if="${order.getRequestedEstateTypes() != null}" th:text="'Estate types (match): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedEstateTypes()))}"></p>
-        <p th:if="${order.getRequestedEstateFacades() != null}" th:text="'Estate facades (match): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedEstateFacades()))}"></p>
-        <p th:if="${order.getRequestedLocations() != null}" th:text="'Locations (match): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedLocations()))}"></p>
-        <p th:if="${order.getRequestedCommodities() != null}" th:text="'Commodities (presence): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedCommodities()))}"></p>
-        <p th:if="${order.getRequestedSpaceMin() != null}" th:text="'Mininmum room space (square meters): ' + ${conversionService.explainIntMap(conversionService.getMap(order.getRequestedSpaceMin()))}"></p>
-        <p th:if="${order.getRequestedTransportMax() != null}" th:text="'Maximum transport distance (min): ' + ${conversionService.explainIntMap(conversionService.getMap(order.getRequestedTransportMax()))}"></p>
-    </div>
-
+    <h4 th:text="${order.getContractType()}"></h4>
+    <a th:if="${order.getOrderedBy() != null}" th:href="'/client?clientId=' + ${order.getOrderedBy().getId()}">
+        <span th:text="'Ordered by: ' + ${order.getOrderedBy().getClientName()}"> </span>
+    </a><br>
     <!--edit delete offer button group-->
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group mr-2" role="group" aria-label="First group">
@@ -52,7 +36,120 @@
         </div>
     </div>
     <!--end of button group-->
+    <br>
+    <p>Include in search:</p>
+    <form id="orderInfo" action="/order">
+        <input type="hidden" id="orderId" name="orderId" th:value="${order.getId()}">
 
+        <div th:if="${order.getContractType() != null}">
+            <input type="checkbox" id="box-ct" class="toggle-button" th:name="${'includeAttributes__ContractType'}" th:checked="${includeAttributes.getOrDefault('ContractType', true)}" value="True">
+            <label for="box-ct" th:text="'Contract type: ' + ${order.getContractType()}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__ContractType'}" value="False">
+        </div>
+        <div th:if="${order.getBuildingState() != null}">
+            <input type="checkbox" id="box-bs" class="toggle-button" th:name="${'includeAttributes__BuildingState'}" th:checked="${includeAttributes.getOrDefault('BuildingState', true)}" value="True">
+            <label for="box-bs" th:text="'Building state: ' + ${order.getBuildingState()}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__BuildingState'}" value="False">
+        </div>
+        <div th:if="${order.getFloorMin() != null}">
+            <input type="checkbox" id="box-fmin" class="toggle-button" th:name="${'includeAttributes__FloorMin'}" th:checked="${includeAttributes.getOrDefault('FloorMin', true)}" value="True">
+            <label for="box-fmin" th:text="'Minimum floor: ' + ${order.getFloorMin()}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__FloorMin'}" value="False">
+        </div>
+        <div th:if="${order.getFloorMax() != null}">
+            <input type="checkbox" id="box-fmax" class="toggle-button" th:name="${'includeAttributes__FloorMax'}" th:checked="${includeAttributes.getOrDefault('FloorMax', true)}" value="True">
+            <label for="box-fmax" th:text="'Maximum floor: ' + ${order.getFloorMax()}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__FloorMax'}" value="False">
+        </div>
+        <div th:if="${order.getPriceMax() != null}">
+            <input type="checkbox" id="box-pm" class="toggle-button" th:name="${'includeAttributes__PriceMax'}" th:checked="${includeAttributes.getOrDefault('PriceMax', true)}" value="True">
+            <label for="box-pm" th:text="'Maximum price: ' + ${order.getPriceMax()}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__PriceMax'}" value="False">
+        </div>
+        <div th:if="${order.getRequestedEstateTypes() != null}">
+            <input type="checkbox" id="box-ret" class="toggle-button" th:name="${'includeAttributes__RequestedEstateTypes'}" th:checked="${includeAttributes.getOrDefault('RequestedEstateTypes', true)}" value="True">
+            <label for="box-ret" th:text="'Estate types (match): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedEstateTypes()))}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__RequestedEstateTypes'}" value="False">
+        </div>
+        <div th:if="${order.getRequestedEstateFacades() != null}">
+            <input type="checkbox" id="box-ref" class="toggle-button" th:name="${'includeAttributes__RequestedEstateTypes'}" th:checked="${includeAttributes.getOrDefault('RequestedEstateFacades', true)}" value="True">
+            <label for="box-ref" th:text="'Estate facades (match): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedEstateFacades()))}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__RequestedEstateFacades'}" value="False">
+        </div>
+        <div th:if="${order.getRequestedLocations() != null}">
+            <input type="checkbox" id="box-rl" class="toggle-button" th:name="${'includeAttributes__RequestedLocations'}" th:checked="${includeAttributes.getOrDefault('RequestedLocations', true)}" value="True">
+            <label for="box-rl" th:text="'Locations (match): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedLocations()))}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__RequestedLocations'}" value="False">
+        </div>
+        <div th:if="${order.getRequestedCommodities() != null}">
+            <input type="checkbox" id="box-rc" class="toggle-button" th:name="${'includeAttributes__RequestedCommodities'}" th:checked="${includeAttributes.getOrDefault('RequestedCommodities', true)}" value="True">
+            <label for="box-rc" th:text="'Commodities (presence): ' + ${conversionService.explainBoolMap(conversionService.getMap(order.getRequestedCommodities()))}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__RequestedCommodities'}" value="False">
+        </div>
+        <div th:if="${order.getRequestedSpaceMin() != null}">
+            <input type="checkbox" id="box-rsm" class="toggle-button" th:name="${'includeAttributes__RequestedSpaceMin'}" th:checked="${includeAttributes.getOrDefault('RequestedSpaceMin', true)}" value="True">
+            <label for="box-rsm" th:text="'Mininmum room space (square meters): ' + ${conversionService.explainIntMap(conversionService.getMap(order.getRequestedSpaceMin()))}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__RequestedSpaceMin'}" value="False">
+        </div>
+        <div th:if="${order.getRequestedTransportMax() != null}">
+            <input type="checkbox" id="box-rtm" class="toggle-button" th:name="${'includeAttributes__RequestedTransportMax'}" th:checked="${includeAttributes.getOrDefault('RequestedTransportMax', true)}" value="True">
+            <label for="box-rtm" th:text="'Maximum transport distance (min): ' + ${conversionService.explainIntMap(conversionService.getMap(order.getRequestedTransportMax()))}"></label><br>
+            <input type="hidden" th:name="${'includeAttributes__RequestedTransportMax'}" value="False">
+        </div>
+
+        <button id="refreshButton" type="submit" class="btn btn-primary">Refresh</button>
+    </form>
+
+    <h3 class="text-center">Suitable offers</h3>
+
+    <table class="table table-bordered table-warning">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col"> Offered by</th>
+            <th scope="col"> Contract Type</th>
+            <th scope="col"> Estate type</th>
+            <th scope="col"> Starting price</th>
+            <th scope="col"> Location</th>
+            <th scope="col"> Transport (min)</th>
+            <th scope="col"> Commodities (presence)</th>
+            <th scope="col"> Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="offer : ${suitableOffers}" th:object="${offer}">
+            <td>
+                <a th:href="'/client?clientId=' + ${offer.getOfferedBy().getId()}">
+                    <span th:text="${offer.getOfferedBy().getClientName()}"> </span>
+                </a>
+            </td>
+            <td>
+                <span th:text="${offer.getContractType()}"> </span>
+            </td>
+            <td>
+                <span th:text="${offer.getEstateType()}"> </span>
+            </td>
+            <td>
+                <span th:text="${offer.getStartingPrice()}"> </span>
+            </td>
+            <td>
+                <span th:text="${offer.getLocation()}"> </span>
+            </td>
+            <td>
+                <span th:text="${conversionService.explainIntMap(conversionService.getMap(offer.getTransport()))}"> </span>
+            </td>
+            <td>
+                <span th:text="${conversionService.explainBoolMap(conversionService.getMap(offer.getCommodities()))}"> </span>
+            </td>
+            <td>
+                <form method="get" action="/offer">
+                    <input type="hidden" name="offerId" th:value="${offer.getId()}">
+                    <button id="openOfferButton" type="submit" class="btn btn-secondary">Open</button>
+                </form>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
 </div>
 
 <div th:replace="general :: site-script"></div>

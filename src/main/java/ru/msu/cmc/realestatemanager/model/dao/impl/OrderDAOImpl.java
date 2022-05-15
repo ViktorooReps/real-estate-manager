@@ -44,7 +44,8 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
                     root.get("requestedEstateTypes"),
                     builder.literal(estateType)
             ).as(Boolean.class);
-            predicates.add(builder.isTrue(isNeeded));
+            Predicate notStated = isNeeded.isNull();
+            predicates.add(builder.or(builder.isTrue(isNeeded), notStated));
         }
         if (filter.getEstateFacade() != null) {
             String estateFacade = filter.getEstateFacade();
@@ -54,7 +55,8 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
                     root.get("requestedEstateFacades"),
                     builder.literal(estateFacade)
             ).as(Boolean.class);
-            predicates.add(builder.isTrue(isNeeded));
+            Predicate notStated = isNeeded.isNull();
+            predicates.add(builder.or(builder.isTrue(isNeeded), notStated));
         }
         if (filter.getSpace() != null) {
             Map<String, Integer> space = filter.getSpace();
@@ -89,12 +91,15 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
         if (filter.getFloor() != null) {
             Integer floor = filter.getFloor();
             Predicate moreThanMin = builder.ge(builder.literal(floor), root.get("floorMin"));
+            Predicate minNull = builder.isNull(root.get("floorMin"));
             Predicate lessThanMax = builder.le(builder.literal(floor), root.get("floorMax"));
-            predicates.add(builder.and(moreThanMin, lessThanMax));
+            Predicate maxNull = builder.isNull(root.get("floorMax"));
+            predicates.add(builder.and(builder.or(moreThanMin, minNull), builder.or(lessThanMax, maxNull)));
         }
         if (filter.getBuildingState() != null) {
             String pattern = "%" + filter.getBuildingState() + "%"; // Any building state containing substring
-            predicates.add(builder.like(root.get("buildingState"), pattern));
+            Predicate buildingStateNull = builder.isNull(root.get("buildingState"));
+            predicates.add(builder.or(builder.like(root.get("buildingState"), pattern), buildingStateNull));
         }
         if (filter.getTransport() != null) {
             Map<String, Integer> transport = filter.getTransport();
@@ -123,7 +128,8 @@ public class OrderDAOImpl extends BaseDAOImpl<Order> implements OrderDAO {
         }
         if (filter.getStartingPrice() != null) {
             Integer startingPrice = filter.getStartingPrice();
-            predicates.add(builder.le(builder.literal(startingPrice), root.get("priceMax")));
+            Predicate priceMaxNull = builder.isNull(root.get("priceMax"));
+            predicates.add(builder.or(builder.le(builder.literal(startingPrice), root.get("priceMax")), priceMaxNull));
         }
 
         if (predicates.size() != 0)

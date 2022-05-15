@@ -13,8 +13,10 @@ import ru.msu.cmc.realestatemanager.controller.util.Converter;
 import ru.msu.cmc.realestatemanager.model.DAOFactory;
 import ru.msu.cmc.realestatemanager.model.dao.ClientDAO;
 import ru.msu.cmc.realestatemanager.model.dao.OfferDAO;
+import ru.msu.cmc.realestatemanager.model.dao.OrderDAO;
 import ru.msu.cmc.realestatemanager.model.entity.Client;
 import ru.msu.cmc.realestatemanager.model.entity.Offer;
+import ru.msu.cmc.realestatemanager.model.entity.Order;
 
 import java.util.*;
 
@@ -26,10 +28,31 @@ public class OfferController {
     private final OfferDAO offerDAO = DAOFactory.getInstance().getOfferDAO();
 
     @Autowired
+    private final OrderDAO orderDAO = DAOFactory.getInstance().getOrderDAO();
+
+    @Autowired
     private final ClientDAO clientDAO = DAOFactory.getInstance().getClientDAO();
 
     @GetMapping("/offer")
-    public String offerPage(@RequestParam(name = "offerId") Integer offerId, Model model) {
+    public String offerPage(@RequestParam Map<String, String> allParams, Model model) {
+        Integer offerId = null;
+        Map<String, Boolean> includeAttributes = new HashMap<>();
+        for (String key : allParams.keySet()) {
+            String value = allParams.get(key);
+            if (key.startsWith("offerId"))
+                offerId = Integer.parseInt(value);
+
+            if (key.startsWith("includeAttribute")) {
+                String attributeName = key.split("__")[1];
+                includeAttributes.put(attributeName, Objects.equals(value, "True"));
+            }
+        }
+
+        if (offerId == null) {
+            model.addAttribute("error_msg", "Cannot show offer details with no offer id!");
+            return "errorPage";
+        }
+
         try {
             Offer offer = offerDAO.getById(offerId);
             if (offer == null) {
@@ -37,9 +60,36 @@ public class OfferController {
                 return "errorPage";
             }
 
+            OrderDAO.Filter.FilterBuilder filterBuilder = OrderDAO.Filter.builder();
+            if (includeAttributes.getOrDefault("ContractType", true))
+                filterBuilder.contractType(offer.getContractType());
+            if (includeAttributes.getOrDefault("EstateType", true))
+                filterBuilder.estateType(offer.getEstateType());
+            if (includeAttributes.getOrDefault("EstateFacade", true))
+                filterBuilder.estateFacade(offer.getEstateFacade());
+            if (includeAttributes.getOrDefault("BuildingState", true))
+                filterBuilder.buildingState(offer.getBuildingState());
+            if (includeAttributes.getOrDefault("Location", true))
+                filterBuilder.location(offer.getLocation());
+            if (includeAttributes.getOrDefault("Floor", true))
+                filterBuilder.floor(offer.getFloor());
+            if (includeAttributes.getOrDefault("StartingPrice", true))
+                filterBuilder.startingPrice(offer.getStartingPrice());
+            if (includeAttributes.getOrDefault("Commodities", true))
+                filterBuilder.commodities(Converter.getMap(offer.getCommodities()));
+            if (includeAttributes.getOrDefault("Space", true))
+                filterBuilder.space(Converter.getIntMap(offer.getSpace()));
+            if (includeAttributes.getOrDefault("Transport", true))
+                filterBuilder.transport(Converter.getIntMap(offer.getTransport()));
+
+            Collection<Order> suitableOrders = orderDAO.getOrdersByFilter(filterBuilder.build());
+
             model.addAttribute("offer", offer);
             model.addAttribute("offerService", offerDAO);
             model.addAttribute("conversionService", new Converter());
+
+            model.addAttribute("includeAttributes", includeAttributes);
+            model.addAttribute("suitableOrders", suitableOrders);
             return "offer";
         } catch (HibernateException e) {
             model.addAttribute("error_msg", e.getMessage());
